@@ -37,7 +37,8 @@ return {
         "emmet_ls",
         "prismals",
         "pyright",
-        "ruff_lsp",
+        -- "ruff_lsp",
+        "ruff",
       },
     })
 

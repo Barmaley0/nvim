@@ -177,33 +177,33 @@ return {
           filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
         })
       end,
-      ["ruff_lsp"] = function()
-        -- configure ruff language server
-        lspconfig["ruff_lsp"].setup({
-          capabilities = capabilities,
-          init_options = {
-            settings = {
-              args = {
-                "--select=E,T201",
-                "--line-length=120",
-              },
-            },
-          },
-        })
-      end,
+      -- ["ruff_lsp"] = function()
+      --   -- configure ruff language server
+      --   lspconfig["ruff_lsp"].setup({
+      --     capabilities = capabilities,
+      --     init_options = {
+      --       settings = {
+      --         args = {
+      --           "--select=E,T201",
+      --           "--line-length=120",
+      --         },
+      --       },
+      --     },
+      --   })
+      -- end,
       ["ruff"] = function()
         -- configure ruff language server
         lspconfig["ruff"].setup({
           capabilities = capabilities,
           init_options = {
             settings = {
-              args = {
-                "--select=E,T201",
-                "--line-length=120",
+              lint = {
+                select = {"E","T201"},
+              },
+                lineLength = 120,
               },
             },
-          },
-        })
+          })
       end,
       ["pylsp"] = function()
         -- configure pylsp language server
