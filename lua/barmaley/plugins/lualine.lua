@@ -8,7 +8,7 @@ return {
     -- configure lualine with modified theme
     lualine.setup({
       options = {
-        theme = "catppuccin",
+        theme = "everforest",
         globalstatus = true,
         -- icons_enabled = true,
         component_separators = { left = "", right = "" },
