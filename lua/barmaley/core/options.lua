@@ -1,5 +1,5 @@
 vim.cmd("let g:netrw_liststyle = 3")
-vim.cmd("let g:codeium_so = 'Windows 10 Pro'")
+vim.cmd("let g:codeium_so = 'Windows 11 Pro'")
 vim.cmd("let g:codeium_arch = 'x86_64'")
 
 local opt = vim.opt
@@ -39,3 +39,6 @@ opt.splitbelow = true -- split horizontal window to the bottom
 
 -- turn off swapfile
 opt.swapfile = false
+
+-- curosr update
+opt.updatetime = 600 -- faster completion (4000ms default)

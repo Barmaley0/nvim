@@ -10,6 +10,7 @@ return {
       background_colour = "#000000",
       fps = 75,
       timeout = 3000,
+      top_down = false,
     })
   end,
 }

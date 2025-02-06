@@ -162,6 +162,20 @@ return {
         jinja = true,
         console = "integratedTerminal",
       },
+      {
+        type = "python",
+        request = "launch",
+        name = "Pytest",
+        module = "pytest",
+        args = {
+          "--log-level",
+          "DEBUG",
+          "--quiet",
+        },
+        justMyCode = true,
+        python = "C:\\Users\\Den\\AppData\\Local\\nvim-data\\mason\\packages\\debugpy\\venv\\Scripts\\python.exe",
+        console = "integratedTerminal",
+      }
     }
     --   dap.adapters.python = {
     --     type = "executable",
