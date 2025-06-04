@@ -24,7 +24,7 @@ return {
         graphql = { "prettier" },
         liquid = { "prettier" },
         lua = { "stylua" },
-        python = { "ruff", "isort", "black" },
+        python = { "ruff_format", "ruff_fix" },
 
         -- },
         -- format_on_save = {
@@ -34,21 +34,49 @@ return {
       },
       notify_on_error = true,
       formatters = {
-        isort = {
-          known_flask = "flask",
-          sections = "FUTURE", "STDLIB", "THIRDPARTY", "FLASK", "FIRSTPARTY", "LOCALFOLDER",
-          include_trailing_comma = true,
-          command = "isort",
+        ruff_fix = {
+          command = "ruff",
           args = {
-            "--profile",
-            "black",
-            "--lines-between-types",
-            "1",
-            "--lines-after-imports",
-            "2",
+            "check",
+            "--fix",
+            "--exit-zero",
+            "--stdin-filename",
+            "$FILENAME",
             "-",
           },
+          stdin = true,
+          cwd = function()
+            return vim.fn.getcwd()
+          end,
         },
+        ruff_format = {
+          command = "ruff",
+          args = {
+            "format",
+            "--stdin-filename",
+            "$FILENAME",
+            "-",
+          },
+          stdin = true,
+          cwd = function()
+            return vim.fn.getcwd()
+          end,
+        },
+        --   isort = {
+        --     known_flask = "flask",
+        --     sections = "FUTURE", "STDLIB", "THIRDPARTY", "FLASK", "FIRSTPARTY", "LOCALFOLDER",
+        --     include_trailing_comma = true,
+        --     command = "isort",
+        --     args = {
+        --       "--profile",
+        --       "black",
+        --       "--lines-between-types",
+        --       "1",
+        --       "--lines-after-imports",
+        --       "2",
+        --       "-",
+        --     },
+        --   },
         prettier = {
           command = "prettier",
           append_args = {
@@ -63,14 +91,17 @@ return {
             "4",
           },
         },
-        black = {
-          command = "black",
-          args = {
-            "--line-length",
-            "120",
-            "-",
-          },
-        },
+        -- black = {
+        --   command = "black",
+        --   args = {
+        --     "--config", vim.fn.getcwd() .. "/pyproject.toml",
+        --     "--quiet",
+        --     "--line-length",
+        --     "120",
+        --     "-",
+        --   },
+        --   stdin = true,
+        -- },
       },
     })
 
@@ -78,7 +109,7 @@ return {
       conform.format({
         lsp_fallback = true,
         async = false,
-        timeout_ms = 1000,
+        timeout_ms = 5000,
       })
     end, { desc = "Format file or range (in visual mode)" })
   end,

@@ -1,10 +1,12 @@
 return {
   "neovim/nvim-lspconfig",
+  version = "^1.0.0",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
     { "folke/neodev.nvim", opts = {} },
+    "williamboman/mason-lspconfig.nvim",
   },
   config = function()
     -- import lspconfig plugin
@@ -17,9 +19,34 @@ return {
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
     local keymap = vim.keymap -- for conciseness
+    local api = vim.api
 
-    vim.api.nvim_create_autocmd("LspAttach", {
-      group = vim.api.nvim_create_augroup("UserLspConfig", {}),
+    vim.diagnostic.config({
+      virtual_text = {
+        prefix = " ",
+        spacing = 4,
+      },
+      signs = true,
+      underline = true,
+      update_in_insert = true,
+      float = {
+        source = "always", -- Or "if_many"
+        border = "rounded",
+      },
+    })
+
+    -- Change the Diagnostic symbols in the sign column (gutter)
+    -- (not in youtube nvim video)
+    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
+    for type, icon in pairs(signs) do
+      local hl = "DiagnosticSign" .. type
+      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+    end
+
+
+    -- configure mapping lspconfig
+    api.nvim_create_autocmd("LspAttach", {
+      group = api.nvim_create_augroup("UserLspConfig", {}),
       callback = function(ev)
         -- Buffer local mappings.
         -- See `:help vim.lsp.*` for documentation on any of the below functions
@@ -70,30 +97,6 @@ return {
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
-      underline = true,
-      update_in_insert = false,
-      virtual_text = { spacing = 4, prefix = " " },
-      severity_sort = true,
-    })
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    -- (not in youtube nvim video)
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
-
-    vim.diagnostic.config({
-      virtual_text = {
-        prefix = " ",
-      },
-      update_in_insert = true,
-      float = {
-        source = "always", -- Or "if_many"
-      },
-    })
-
     mason_lspconfig.setup_handlers({
       -- default handler for installed servers
       function(server_name)
@@ -101,6 +104,11 @@ return {
           capabilities = capabilities,
         })
       end,
+    -- vim.lsp.config("*", {
+    --     capabilities = capabilities,
+    --     on_attach = on_attach,
+    --     handlers = handlers,
+    --   })
       ["svelte"] = function()
         -- configure svelte server
         lspconfig["svelte"].setup({
@@ -197,13 +205,26 @@ return {
           capabilities = capabilities,
           init_options = {
             settings = {
-              lint = {
-                select = {"E","T201"},
-              },
-                lineLength = 120,
-              },
-            },
-          })
+              args = {
+              }
+            }
+          }
+        })
+      end,
+      ["pyright"] = function()
+        -- configure pyright language server
+        lspconfig["pyright"].setup({
+          capabilities = capabilities,
+          settings = {
+            python = {
+              analysis = {
+                typeCheckingMode = "basic",
+                autoSearchPaths = true,
+                useLibraryCodeForTypes = true,
+              }
+            }
+          }
+        })
       end,
       ["pylsp"] = function()
         -- configure pylsp language server
@@ -213,7 +234,7 @@ return {
             pylsp = {
               plugins = {
                 pycodestyle = {
-                  ignore = { "W391", "E501", "E265" },
+                  -- ignore = { "W391", "E501", "E265" },
                   maxLineLength = 120,
                 },
               },
