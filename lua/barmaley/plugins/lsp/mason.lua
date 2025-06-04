@@ -31,8 +31,6 @@ return {
 
     mason_lspconfig.setup({
       -- list of servers for mason to install
-      automatic_enable = false,
-      autematic_installation = true,
       ensure_installed = {
         "cmake",
         "docker_compose_language_service",
@@ -55,6 +53,9 @@ return {
         -- "ruff_lsp",
         "ruff",
       },
+      -- auto-install configured servers (with lspconfig)
+      automatic_enable = true,
+      automatic_installation = true,
     })
 
 
