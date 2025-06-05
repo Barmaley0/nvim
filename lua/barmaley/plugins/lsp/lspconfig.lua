@@ -1,6 +1,6 @@
 return {
   "neovim/nvim-lspconfig",
-  version = "^1.0.0",
+  -- version = "^1.0.0",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
@@ -26,7 +26,14 @@ return {
         prefix = " ",
         spacing = 4,
       },
-      signs = true,
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = " ",
+          [vim.diagnostic.severity.WARN] = " ",
+          [vim.diagnostic.severity.HINT] = "󰠠 ",
+          [vim.diagnostic.severity.INFO] = " ",
+        },
+      },
       underline = true,
       update_in_insert = true,
       float = {
@@ -34,15 +41,6 @@ return {
         border = "rounded",
       },
     })
-
-    -- Change the Diagnostic symbols in the sign column (gutter)
-    -- (not in youtube nvim video)
-    local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-    for type, icon in pairs(signs) do
-      local hl = "DiagnosticSign" .. type
-      vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-    end
-
 
     -- configure mapping lspconfig
     api.nvim_create_autocmd("LspAttach", {
@@ -97,194 +95,164 @@ return {
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    mason_lspconfig.setup_handlers({
-      -- default handler for installed servers
-      function(server_name)
-        lspconfig[server_name].setup({
-          capabilities = capabilities,
-        })
-      end,
-    -- vim.lsp.config("*", {
-    --     capabilities = capabilities,
-    --     on_attach = on_attach,
-    --     handlers = handlers,
-    --   })
-      ["svelte"] = function()
-        -- configure svelte server
-        lspconfig["svelte"].setup({
-          capabilities = capabilities,
-          on_attach = function(client, bufnr)
-            vim.api.nvim_create_autocmd("BufWritePost", {
-              pattern = { "*.js", "*.ts" },
-              callback = function(ctx)
-                -- Here use ctx.match instead of ctx.file
-                client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
-              end,
-            })
+    -- Функция для настройки серверов по умолчанию
+    -- Простая настройка серверов - каждый сервер настраивается отдельно
+    -- Это самый надежный способ, который работает со всеми версиями
+
+    -- Lua Language Server
+    lspconfig.lua_ls.setup({
+      capabilities = capabilities,
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          completion = {
+            callSnippet = "Replace",
+          },
+        },
+      },
+    })
+
+    -- Python - Ruff
+    lspconfig.ruff.setup({
+      capabilities = capabilities,
+      init_options = {
+        settings = {
+          -- Ruff будет читать настройки из pyproject.toml
+          configurationPreference = "filesystemFirst",
+          fixAll = true,
+          organizeImports = true,
+        },
+      },
+    })
+
+    -- Python - Pyright
+    lspconfig.pyright.setup({
+      capabilities = capabilities,
+      settings = {
+        python = {
+          analysis = {
+            typeCheckingMode = "basic",
+            autoSearchPaths = true,
+            useLibraryCodeForTypes = true,
+            autoImportCompletions = true,
+          },
+        },
+      },
+    })
+
+    -- Python - pylsp (если нужен)
+    lspconfig.pylsp.setup({
+      capabilities = capabilities,
+      settings = {
+        pylsp = {
+          plugins = {
+            pycodestyle = {
+              pyflakes = { enabled = false},
+              pycodestyle = { enabled = false},
+              autopep8 = { enabled = false},
+              yapf = { enabled = false},
+              mccable = { enabled = false},
+              pylsp_mypy = { enabled = false},
+              pylsp_black = { enabled = false},
+              pylsp_isort = { enabled = false},
+              maxLineLength = 120,
+            },
+          },
+        },
+      },
+    })
+
+    -- HTML
+    lspconfig.html.setup({
+      capabilities = capabilities,
+      filetypes = { "html", "css", "templ" },
+    })
+
+    -- YAML
+    lspconfig.yamlls.setup({
+      capabilities = capabilities,
+      settings = {
+        yaml = {
+          schemas = {
+            ["https://raw.githubusercontent.com/quantumblacklabs/kedro/develop/static/jsonschema/kedro-catalog-0.17.json"] = "conf/**/*catalog*",
+            ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
+          },
+        },
+      },
+    })
+
+    -- Docker
+    lspconfig.dockerls.setup({
+      capabilities = capabilities,
+      settings = {
+        docker = {
+          languageserver = {
+            formatter = {
+              ignoreMultilineInstructions = true,
+            },
+          },
+        },
+      },
+    })
+
+    -- Docker Compose
+    lspconfig.docker_compose_language_service.setup({
+      capabilities = capabilities,
+      settings = {
+        docker = {
+          languageserver = {
+            formatter = {
+              ignoreMultilineInstructions = true,
+            },
+          },
+        },
+      },
+    })
+
+    -- Jinja
+    lspconfig.jinja_lsp.setup({
+      capabilities = capabilities,
+      filetypes = { "jinja", "rust", "jinja.html", "html" },
+      args = {
+        "--indent=2",
+      },
+    })
+
+    -- GraphQL
+    lspconfig.graphql.setup({
+      capabilities = capabilities,
+      filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
+    })
+
+    -- Emmet
+    lspconfig.emmet_ls.setup({
+      capabilities = capabilities,
+      filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
+      init_options = {
+        html = {
+          options = {
+            ["bem.enabled"] = true,
+          },
+        },
+      },
+    })
+
+    -- Emmet Language Server (альтернативный)
+    lspconfig.emmet_language_server.setup({
+      capabilities = capabilities,
+    })
+
+    -- Svelte
+    lspconfig.svelte.setup({
+      capabilities = capabilities,
+      on_attach = function(client, bufnr)
+        vim.api.nvim_create_autocmd("BufWritePost", {
+          pattern = { "*.js", "*.ts" },
+          callback = function(ctx)
+            client.notify("$/onDidChangeTsOrJsFile", { uri = ctx.match })
           end,
-        })
-      end,
-      ["dockerls"] = function()
-        -- configure docker language server
-        lspconfig["dockerls"].setup({
-          capabilities = capabilities,
-          settings = {
-            docker = {
-              languageserver = {
-                formatter = {
-                  ignoreMultilineInstructions = true,
-                },
-              },
-            },
-          },
-        })
-      end,
-      ["docker_compose_language_service"] = function()
-        -- configure docker compose language server
-        lspconfig["docker_compose_language_service"].setup({
-          capabilities = capabilities,
-          settings = {
-            docker = {
-              languageserver = {
-                formatter = {
-                  ignoreMultilineInstructions = true,
-                },
-              },
-            },
-          },
-        })
-      end,
-      ["yamlls"] = function()
-        -- configure yaml language server
-        lspconfig["yamlls"].setup({
-          capabilities = capabilities,
-          settings = {
-            yaml = {
-              schemas = {
-                ["https://raw.githubusercontent.com/quantumblacklabs/kedro/develop/static/jsonschema/kedro-catalog-0.17.json"] = "conf/**/*catalog*",
-                ["https://json.schemastore.org/github-workflow.json"] = "/.github/workflows/*",
-              },
-            },
-          },
-        })
-      end,
-      ["jinja_lsp"] = function()
-        -- configure jinja language server
-        lspconfig["jinja_lsp"].setup({
-          capabilities = capabilities,
-          filetypes = { "jinja", "rust", "jinja.html", "html" },
-          args = {
-            "--indent=2",
-          }
-        })
-      end,
-      ["graphql"] = function()
-        -- configure graphql language server
-        lspconfig["graphql"].setup({
-          capabilities = capabilities,
-          filetypes = { "graphql", "gql", "svelte", "typescriptreact", "javascriptreact" },
-        })
-      end,
-      -- ["ruff_lsp"] = function()
-      --   -- configure ruff language server
-      --   lspconfig["ruff_lsp"].setup({
-      --     capabilities = capabilities,
-      --     init_options = {
-      --       settings = {
-      --         args = {
-      --           "--select=E,T201",
-      --           "--line-length=120",
-      --         },
-      --       },
-      --     },
-      --   })
-      -- end,
-      ["ruff"] = function()
-        -- configure ruff language server
-        lspconfig["ruff"].setup({
-          capabilities = capabilities,
-          init_options = {
-            settings = {
-              args = {
-              }
-            }
-          }
-        })
-      end,
-      ["pyright"] = function()
-        -- configure pyright language server
-        lspconfig["pyright"].setup({
-          capabilities = capabilities,
-          settings = {
-            python = {
-              analysis = {
-                typeCheckingMode = "basic",
-                autoSearchPaths = true,
-                useLibraryCodeForTypes = true,
-              }
-            }
-          }
-        })
-      end,
-      ["pylsp"] = function()
-        -- configure pylsp language server
-        lspconfig["pylsp"].setup({
-          capabilities = capabilities,
-          settings = {
-            pylsp = {
-              plugins = {
-                pycodestyle = {
-                  -- ignore = { "W391", "E501", "E265" },
-                  maxLineLength = 120,
-                },
-              },
-            },
-          },
-        })
-      end,
-      ["html"] = function()
-        -- configure html server
-        lspconfig["html"].setup({
-          capabilities = capabilities,
-          filetypes = { "html", "css", "templ" },
-        })
-      end,
-      ["emmet_ls"] = function()
-        -- configure emmet language server
-        lspconfig["emmet_ls"].setup({
-          capabilities = capabilities,
-          filetypes = { "html", "typescriptreact", "javascriptreact", "css", "sass", "scss", "less", "svelte" },
-          init_options = {
-            html = {
-              options = {
-                -- For possible options, see: https://github.com/emmetio/emmet/blob/master/src/config.ts#L79
-                ["bem.enabled"] = true,
-              },
-            },
-          },
-        })
-      end,
-      ["emmet_language_server"] = function()
-        -- configure emmet language server
-        lspconfig["emmet_language_server"].setup({
-          capabilities = capabilities,
-        })
-      end,
-      ["lua_ls"] = function()
-        -- configure lua server (with special settings)
-        lspconfig["lua_ls"].setup({
-          capabilities = capabilities,
-          settings = {
-            Lua = {
-              -- make the language server recognize "vim" global
-              diagnostics = {
-                globals = { "vim" },
-              },
-              completion = {
-                callSnippet = "Replace",
-              },
-            },
-          },
         })
       end,
     })

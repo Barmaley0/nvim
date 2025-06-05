@@ -3,8 +3,8 @@ return {
   dependencies = {
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
-    { "mason-org/mason.nvim", version = "^1.0.0" },
-    { "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
+    -- { "mason-org/mason.nvim", version = "^1.0.0" },
+    -- { "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
   },
   config = function()
     -- import mason
@@ -25,7 +25,7 @@ return {
           package_uninstalled = "✗",
         },
       },
-      log_level = vim.log.levels.DEBUG,
+      log_level = vim.log.levels.INFO,
       max_concurrent_installers = 4,
     })
 
@@ -50,16 +50,16 @@ return {
         "emmet_ls",
         "prismals",
         "pyright",
-        -- "ruff_lsp",
         "ruff",
       },
       -- auto-install configured servers (with lspconfig)
-      automatic_enable = true,
       automatic_installation = true,
+      automatic_enable = false,
     })
 
 
     mason_tool_installer.setup({
+      -- list of tools for mason-tool-installer to install
       ensure_installed = {
         "mypy",
         "cmakelang",

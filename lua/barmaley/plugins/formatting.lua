@@ -25,15 +25,16 @@ return {
         liquid = { "prettier" },
         lua = { "stylua" },
         python = { "ruff_format", "ruff_fix" },
-
-        -- },
-        -- format_on_save = {
-        --   lsp_fallback = true,
-        --   async = false,
-        --   timeout_ms = 1000,
       },
+      -- Можно включить автоформатирование при сохранении (по желанию)
+      -- format_on_save = {
+      --   lsp_fallback = true,
+      --   async = false,
+      --   timeout_ms = 1000,
+      -- },
       notify_on_error = true,
       formatters = {
+        -- Ruff для исправления проблем (линтинг + импорты)
         ruff_fix = {
           command = "ruff",
           args = {
@@ -49,6 +50,7 @@ return {
             return vim.fn.getcwd()
           end,
         },
+        -- Ruff для форматирования кода
         ruff_format = {
           command = "ruff",
           args = {
@@ -62,21 +64,7 @@ return {
             return vim.fn.getcwd()
           end,
         },
-        --   isort = {
-        --     known_flask = "flask",
-        --     sections = "FUTURE", "STDLIB", "THIRDPARTY", "FLASK", "FIRSTPARTY", "LOCALFOLDER",
-        --     include_trailing_comma = true,
-        --     command = "isort",
-        --     args = {
-        --       "--profile",
-        --       "black",
-        --       "--lines-between-types",
-        --       "1",
-        --       "--lines-after-imports",
-        --       "2",
-        --       "-",
-        --     },
-        --   },
+        -- Prettier с увеличенной шириной строки
         prettier = {
           command = "prettier",
           append_args = {
@@ -84,6 +72,7 @@ return {
             "120",
           },
         },
+        -- djlint для Jinja/Django шаблонов
         djlint = {
           command = "djlint",
           append_args = {
@@ -91,20 +80,10 @@ return {
             "4",
           },
         },
-        -- black = {
-        --   command = "black",
-        --   args = {
-        --     "--config", vim.fn.getcwd() .. "/pyproject.toml",
-        --     "--quiet",
-        --     "--line-length",
-        --     "120",
-        --     "-",
-        --   },
-        --   stdin = true,
-        -- },
       },
     })
 
+    -- Маппинг для ручного форматирования
     vim.keymap.set({ "n", "v" }, "<leader>mp", function()
       conform.format({
         lsp_fallback = true,
@@ -112,5 +91,22 @@ return {
         timeout_ms = 5000,
       })
     end, { desc = "Format file or range (in visual mode)" })
+
+    -- Дополнительные маппинги для Python
+    vim.keymap.set("n", "<leader>mf", function()
+      conform.format({
+        formatters = { "ruff_fix" },
+        async = false,
+        timeout_ms = 3000,
+      })
+    end, { desc = "Fix Python issues with Ruff" })
+
+    vim.keymap.set("n", "<leader>mr", function()
+      conform.format({
+        formatters = { "ruff_format" },
+        async = false,
+        timeout_ms = 3000,
+      })
+    end, { desc = "Format Python code with Ruff" })
   end,
 }
