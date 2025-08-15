@@ -13,7 +13,7 @@ return {
     local lspconfig = require("lspconfig")
 
     -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
+    -- local mason_lspconfig = require("mason-lspconfig")
 
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -149,16 +149,16 @@ return {
         pylsp = {
           plugins = {
             pycodestyle = {
-              pyflakes = { enabled = false},
-              pycodestyle = { enabled = false},
-              autopep8 = { enabled = false},
-              yapf = { enabled = false},
-              mccable = { enabled = false},
-              pylsp_mypy = { enabled = false},
-              pylsp_black = { enabled = false},
-              pylsp_isort = { enabled = false},
+            enabled = false,
               maxLineLength = 120,
             },
+            pyflakes = { enabled = false},
+            autopep8 = { enabled = false},
+            yapf = { enabled = false},
+            mccable = { enabled = false},
+            pylsp_mypy = { enabled = false},
+            pylsp_black = { enabled = false},
+            pylsp_isort = { enabled = false},
           },
         },
       },
@@ -195,6 +195,13 @@ return {
           },
         },
       },
+    })
+
+    -- GitHub
+    lspconfig.gh_actions_ls.setup({
+      capabilities = capabilities,
+      filetypes = { "yaml" },
+      cmd = { "gh-actions-language-server", "--stdio" },
     })
 
     -- Docker Compose

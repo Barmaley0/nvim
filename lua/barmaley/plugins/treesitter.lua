@@ -11,18 +11,7 @@ return {
 
     -- configure treesitter
     treesitter.setup({
-      -- enable syntax highlighting
-      highlight = {
-        enable = true,
-      },
-      -- enable indentation
-      indent = { enable = true },
-      -- enable autotagging (w/ nvim-ts-autotag plugin)
-      autotag = {
-        enable = true,
-      },
-      auto_install = true,
-      -- ensure these language parsers are installed
+      -- List of parser names, or "all"
       ensure_installed = {
         "json",
         "javascript",
@@ -50,6 +39,37 @@ return {
         "http",
         "requirements",
       },
+
+      -- Install parsers synchronously (only applied to `ensure_installed`)
+      sync_install = false,
+
+      -- Automatically install missing parsers when entering buffer
+      auto_install = true,
+
+      -- List of parsers to ignore installing (for "all")
+      ignore_install = {},
+
+      ---- Modules configuration ----
+      modules = {},
+
+      -- Enable syntax highlighting
+      highlight = {
+        enable = true,
+        -- Additional options for highlight module
+        additional_vim_regex_highlighting = false,
+      },
+
+      -- Enable indentation
+      indent = { 
+        enable = true,
+      },
+
+      -- Enable autotagging (w/ nvim-ts-autotag plugin)
+      autotag = {
+        enable = true,
+      },
+
+      -- Incremental selection
       incremental_selection = {
         enable = true,
         keymaps = {
@@ -59,6 +79,12 @@ return {
           node_decremental = "<bs>",
         },
       },
+
+      -- Other available modules you might want to configure:
+      -- textobjects = {},
+      -- textsubjects = {},
+      -- playground = {},
+      -- query_linter = {},
     })
   end,
 }

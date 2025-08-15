@@ -3,9 +3,11 @@ return {
   config = function()
     local auto_session = require("auto-session")
 
+    vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
+
     auto_session.setup({
+      auto_restore = false,
       pre_save_cmds = { "NvimTreeClose" },
-      auto_restore_enabled = false,
       auto_session_suppress_dirs = { "~/", "~/Dev/", "~/Downloads", "~/Documents", "~/Desktop/" },
       -- save_extra_cmds = {
       --   "NvimTreeOpen"

@@ -14,6 +14,8 @@ return {
     "saadparwaiz1/cmp_luasnip", -- for autocompletion
     "rafamadriz/friendly-snippets", -- useful snippets
     "onsails/lspkind.nvim", -- vs-code like pictograms
+    "jmbuhr/cmp-pandoc-references",
+    "kdheepak/cmp-latex-symbols",
   },
   config = function()
     local cmp = require("cmp")
@@ -44,12 +46,30 @@ return {
         ["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
         ["<C-e>"] = cmp.mapping.abort(), -- close completion window
         ["<CR>"] = cmp.mapping.confirm({ select = false }),
+        ["<C-h>"] = cmp.mapping(function()
+          if cmp.visible() then
+            local entry = cmp.get_selected_entry()
+            if entry then
+              vim.cmd("help " .. entry.completion_item.label)
+            end
+          end
+        end, { "i" }),
       }),
       -- sources for autocompletion
       sources = cmp.config.sources({
         { name = "nvim_lsp"},
         { name = "luasnip" }, -- snippets
         { name = "buffer" }, -- text within current buffer
+         -- Улучшенные Python-источники
+        {
+          name = "python",
+          option = {
+            show_documentation = true,  -- Показывать документацию для методов
+            documentation_format = function(doc)
+              return string.format("%s\n\n%s", doc.description, doc.signature)
+            end
+          }
+        },
         { name = "path" }, -- file system paths
         { name = "nvim_lsp_signature_help" },
         { name = "py-requirements" },
@@ -74,8 +94,44 @@ return {
         format = lspkind.cmp_format({
           maxwidth = 50,
           ellipsis_char = "...",
+          -- Специальные иконки для Python-методов
+          symbol_map = {
+            Method = "󰆧",
+            Function = "󰊕",
+            Constructor = "",
+            Field = "󰜢",
+            Variable = "󰀫",
+            Class = "󰠱",
+            Module = "",
+            Property = "",
+            Unit = "",
+            Value = "󰎠",
+            Enum = "",
+            Keyword = "󰌋",
+            Snippet = "",
+            Color = "󰏘",
+            File = "󰈙",
+            Reference = "󰈇",
+            Folder = "󰉋",
+            Constant = "󰏿",
+            Struct = "󰙅",
+          },
         }),
       },
+      -- Добавляем экспериментальные фичи
+      experimental = {
+        ghost_text = true,  -- Показывать подсказки прямо в тексте
+        native_menu = false,
+      },
     })
-  end,
+    -- Специальная настройка для Python
+    cmp.setup.filetype("python", {
+      sources = cmp.config.sources({
+        { name = "nvim_lsp", priority = 1000 },
+        { name = "python", priority = 900 },
+        { name = "luasnip", priority = 750 },
+        { name = "buffer", priority = 500 },
+      })
+    })
+  end
 }

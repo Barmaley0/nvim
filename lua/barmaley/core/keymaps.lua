@@ -2,7 +2,7 @@ vim.g.mapleader = " "
 
 local keymap = vim.keymap -- for conciseness
 
-keymap.set("i", "jk", "<ESC>", { desc = "Exit insert mode with jk" })
+keymap.set("i", "jj", "<ESC>", { desc = "Exit insert mode with jk" })
 
 -- save
 keymap.set("n", "<leader>w", "<CMD>update<CR>", { desc = "Save file" })
