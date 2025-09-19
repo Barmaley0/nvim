@@ -7,6 +7,9 @@ local opt = vim.opt
 opt.relativenumber = true
 opt.number = true
 
+-- views can only be fully collapsed with the global statusline
+opt.laststatus = 3
+
 -- tabs & indentation
 opt.tabstop = 2 -- 2 spaces for tabs (prettier default)
 opt.shiftwidth = 2 -- 2 spaces for indent width

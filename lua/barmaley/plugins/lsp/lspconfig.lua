@@ -1,19 +1,14 @@
 return {
   "neovim/nvim-lspconfig",
-  -- version = "^1.0.0",
   event = { "BufReadPre", "BufNewFile" },
   dependencies = {
     "hrsh7th/cmp-nvim-lsp",
     { "antosha417/nvim-lsp-file-operations", config = true },
     { "folke/neodev.nvim", opts = {} },
-    "williamboman/mason-lspconfig.nvim",
   },
   config = function()
     -- import lspconfig plugin
     local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    -- local mason_lspconfig = require("mason-lspconfig")
 
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -94,6 +89,8 @@ return {
 
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
+    capabilities.general = capabilities.general or {}
+    capabilities.general.positionEncodings = { "utf-16" }
 
     -- Функция для настройки серверов по умолчанию
     -- Простая настройка серверов - каждый сервер настраивается отдельно
@@ -149,16 +146,16 @@ return {
         pylsp = {
           plugins = {
             pycodestyle = {
-            enabled = false,
+            enabled = true,
               maxLineLength = 120,
             },
-            pyflakes = { enabled = false},
-            autopep8 = { enabled = false},
-            yapf = { enabled = false},
-            mccable = { enabled = false},
-            pylsp_mypy = { enabled = false},
-            pylsp_black = { enabled = false},
-            pylsp_isort = { enabled = false},
+            pyflakes = { enabled = true},
+            autopep8 = { enabled = true},
+            yapf = { enabled = true},
+            mccable = { enabled = true},
+            pylsp_mypy = { enabled = true},
+            pylsp_black = { enabled = true},
+            pylsp_isort = { enabled = true},
           },
         },
       },

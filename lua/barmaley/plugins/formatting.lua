@@ -24,7 +24,7 @@ return {
         graphql = { "prettier" },
         liquid = { "prettier" },
         lua = { "stylua" },
-        python = { "ruff_format", "ruff_fix" },
+        python = { "ruff_format", "ruff_fix"},
       },
       -- Можно включить автоформатирование при сохранении (по желанию)
       -- format_on_save = {
