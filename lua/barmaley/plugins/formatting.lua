@@ -69,7 +69,7 @@ return {
           command = "prettier",
           append_args = {
             "--print-width",
-            "120",
+            "100",
           },
         },
         -- djlint для Jinja/Django шаблонов

@@ -2,7 +2,7 @@ return {
   "Bekaboo/deadcolumn.nvim",
   event = "VeryLazy",
   config = function()
-    vim.opt.colorcolumn = "120"
+    vim.opt.colorcolumn = "100"
 
     local column = require("deadcolumn")
 

@@ -1,33 +1,7 @@
 return {
-  "williamboman/mason.nvim",
-  dependencies = {
+  {
     "williamboman/mason-lspconfig.nvim",
-    "WhoIsSethDaniel/mason-tool-installer.nvim",
- },
-  config = function()
-    -- import mason
-    local mason = require("mason")
-
-    -- import mason-lspconfig
-    local mason_lspconfig = require("mason-lspconfig")
-
-    -- import mason-tool-installer
-    local mason_tool_installer = require("mason-tool-installer")
-
-    -- enable mason and configure icons
-    mason.setup({
-      ui = {
-        icons = {
-          package_installed = "✓",
-          package_pending = "➜",
-          package_uninstalled = "✗",
-        },
-      },
-      log_level = vim.log.levels.INFO,
-      max_concurrent_installers = 4,
-    })
-
-    mason_lspconfig.setup({
+    opts = {
       -- list of servers for mason to install
       ensure_installed = {
         "cmake",
@@ -50,35 +24,54 @@ return {
         "pyright",
         "ruff",
       },
-      -- auto-install configured servers (with lspconfig)
-      automatic_installation = true,
-      automatic_enable = false,
-    })
-
-
-    mason_tool_installer.setup({
-      -- list of tools for mason-tool-installer to install
-      ensure_installed = {
-        "mypy",
-        "cmakelang",
-        "cmakelint",
-        "debugpy",
-        "djlint",
-        "hadolint",
-        "htmlhint",
-        "pydocstyle",
-        "yamlfmt",
-        "yamlfix",
-        "yamllint",
-        "jq",
-        "prettier", -- prettier formatter
-        "stylua", -- lua formatter
-        "ruff",
-        "pylint",
-        "eslint_d",
+      -- automatic_installation = true,
+      -- automatic_enable = false,
+    },
+    dependencies = {
+      {
+      "williamboman/mason.nvim",
+      opts = {
+        ui = {
+          icons = {
+            package_installed = "✓",
+            package_pending = "➜",
+            package_uninstalled = "✗",
+          },
+        },
       },
-      auto_update = true,
-      run_on_start = true,
-    })
-  end,
+      -- log_level = vim.log.levels.INFO,
+      -- max_concurrent_installers = 4,
+    },
+    "neovim/nvim-lspconfig",
+  },
+},
+{
+  "WhoIsSethDaniel/mason-tool-installer.nvim",
+  opts = {
+    ensure_installed = {
+      "mypy",
+      "cmakelang",
+      "cmakelint",
+      "debugpy",
+      "djlint",
+      "hadolint",
+      "htmlhint",
+      "pydocstyle",
+      "yamlfmt",
+      "yamlfix",
+      "yamllint",
+      "jq",
+      "prettier", -- prettier formatter
+      "stylua", -- lua formatter
+      "ruff",
+      "pylint",
+      "eslint_d",
+    },
+      -- auto_update = true,
+      -- run_on_start = true,
+    },
+    dependencies = {
+      "williamboman/mason.nvim",
+    },
+  }
 }
